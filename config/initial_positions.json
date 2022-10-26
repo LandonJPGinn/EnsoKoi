@@ -1,0 +1,98 @@
+{
+    "2": {
+        "P1": {
+            "TanchoA": "F4",
+            "TanchoB": "G5",
+            "TanchoC": "I5",
+            "TanchoD": "J4",
+            "AsagiA": "H2",
+            "AsagiB": "H5",
+            "KumonryuA": "G3",
+            "KumonryuB": "I3",
+            "UtsuriA": "D2",
+            "UtsuriB": "L2",
+            "OgonA": "F2",
+            "OgonB": "J2",
+            "Sumi": "H1"
+        },
+        "P2": {
+            "TanchoA": "J10",
+            "TanchoB": "I10",
+            "TanchoC": "G10",
+            "TanchoD": "F10",
+            "AsagiA": "H14",
+            "AsagiB": "H11",
+            "KumonryuA": "I12",
+            "KumonryuB": "G12",
+            "UtsuriA": "L10",
+            "UtsuriB": "D10",
+            "OgonA": "J12",
+            "OgonB": "F12",
+            "Sumi": "H15"
+        }
+    },
+    "3": {
+        "P1": {
+            "Sumi": ""
+        },
+        "P2": {
+            "Sumi": ""
+        },
+        "P3": {
+            "Sumi": ""
+        }
+    },
+    "4": {
+        "P1": {
+            "Sumi": ""
+        },
+        "P2": {
+            "Sumi": ""
+        },
+        "P3": {
+            "Sumi": ""
+        },
+        "P4": {
+            "Sumi": ""
+        }
+    },
+    "5": {
+        "P1": {
+            "Sumi": ""
+        },
+        "P2": {
+            "Sumi": ""
+        },
+        "P3": {
+            "Sumi": ""
+        },
+        "P4": {
+            "Sumi": ""
+        },
+        "P5": {
+            "Sumi": ""
+        }
+    },
+    "6": {
+        "P1": {
+            "Sumi": ""
+        },
+        "P2": {
+            "Sumi": ""
+        },
+        "P3": {
+            "Sumi": ""
+        },
+        "P4": {
+            "Sumi": ""
+        },
+        "P5": {
+            "Sumi": ""
+        },
+        "P6": {
+            "Sumi": ""
+        }
+    }
+}
+
+

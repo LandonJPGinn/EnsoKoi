@@ -1,13 +1,13 @@
-from typing import Optional
-from dataclasses import dataclass
-from dataclasses import field
-from itertools import product
-from collections import namedtuple
-from collections import defaultdict
+import json
 import math
 import random
 import string
-import json
+from collections import defaultdict, namedtuple
+from dataclasses import dataclass, field
+from itertools import product
+from typing import Optional
+
+from config import Loader
 
 
 class Rules:
@@ -36,7 +36,12 @@ class Rules:
 class EnsoKoi:
 
     def __init__(self):
-        self.InitializePlayers()
+        m = Map()
+        self.player_count = 2
+        self.positions = Loader.initial_positions(self.player_count)
+        self.boardtiles = (HexTile(cd) for cd in m.tiles.values())
+        self.initializePlayers()
+        self.startingPositions()
 
     def initializePlayers(self, playerNameA="Black", playerNameB="Red"):
         self.players = {
@@ -57,9 +62,22 @@ class EnsoKoi:
             v ^= 1
             pl._order = f"P{v+1}"
 
-    @classmethod
-    def arrangePieces(cls, player):
-        print(player.team.koi)
+    def startingPositions(self):
+        for p in self.players:
+            self.arrangePieces(p)
+
+    def arrangePieces(self, player):
+        # print(player.team.koi)
+        # a = zip(
+        #     self.boardtiles,
+        #     self.positions
+        # )
+        print("\n\n\n")
+        for i in self.positions:
+            print(i)
+        # Get board
+        # Get Players
+
 
 
 class Coord(tuple):
@@ -103,7 +121,6 @@ class Map:
     def __init__(self):
         self.notation_map = Map.notation
         self.inverted_notation_map = {v:k for k, v in self.notation_map.items()}
-
 
     @IterProperty
     def tiles(cls):
@@ -324,12 +341,16 @@ class BoundaryException(Exception):pass
 
 
 # Runtime Test Code
+instance = EnsoKoi()
 
 
 
+# for hx in instance.boardtiles:
+#     print(f"{hx!r}")
 
 
 
+assert what
 
 # q ascending == Letter
 # s += Number along letter
@@ -350,42 +371,37 @@ A Hex direction should be predictable
 
 """
 
-a = Coord((0, 0, 1))
-b = Coord((2, -2, 4))
-c = Coord((12, 2, -3))
+# a = Coord((0, 0, 1))
+# b = Coord((2, -2, 4))
+# c = Coord((12, 2, -3))
 
-print(f'{a!s:_^120}')
+# print(f'{a!s:_^120}')
 
 M = Map()
 
+# for _ in M.notation.items():
+#     print(_)
 
 
-for _ in M.notation.items():
-    print(_)
-
-
-
-print(M.notation.get("H3"))
-print("//")
-print(M.notation_map.get("A2"))
-
+# print(M.notation.get("H3"))
+# print("//")
+# print(M.notation_map.get("A2"))
 
 h = HexTile(coord=M.notation.get("H7"))
+
 print(repr(h))
-print(h.up)
-print(h.inBounds)
-
-
-print(h.neighbors)
+# print(h.up)
+# print(h.inBounds)
 
 
 for ne in h.neighbors:
     address = M.address(ne)
     print(f"neighbor at {ne} is called {address}")
-    print("who is at position:")
-    print(M.position(address))
+    # print("who is at position:")
+    # print(M.position(address))
     safe = M.isSafe(address)
-    print(f"{address} is safe? {safe}")
+    if safe:
+        print(f"\t\t{address} is safe? {safe}")
 
 
 
@@ -417,108 +433,9 @@ for ne in h.neighbors:
 # print(4*6)
 
 
-
-
-
 myPlayer = Player(name="Landon")
 
+# Todo:
+"""
 
-
-placement = {
-    2: {
-        "P1": {
-            "TanchoA": "F4",
-            "TanchoB": "G5",
-            "TanchoC": "I5",
-            "TanchoD": "J4",
-            "AsagiA": "H2",
-            "AsagiB": "H5",
-            "KumonryuA": "G3",
-            "KumonryuB": "I3",
-            "UtsuriA": "D2",
-            "UtsuriB": "L2",
-            "OgonA": "F2",
-            "OgonB": "J2",
-            "Sumi": "H1",
-        },
-        "P2": {
-            "TanchoA": "J10",
-            "TanchoB": "I10",
-            "TanchoC": "G10",
-            "TanchoD": "F10",
-            "AsagiA": "H14",
-            "AsagiB": "H11",
-            "KumonryuA": "I12",
-            "KumonryuB": "G12",
-            "UtsuriA": "L10",
-            "UtsuriB": "D10",
-            "OgonA": "J12",
-            "OgonB": "F12",
-            "Sumi": "H15",
-        },
-    },
-    3: {
-        "P1": {
-            "Sumi": "",
-        },
-        "P2": {
-            "Sumi": "",
-        },
-        "P3": {
-            "Sumi": "",
-        },
-    },
-    4: {
-        "P1": {
-            "Sumi": "",
-        },
-        "P2": {
-            "Sumi": "",
-        },
-        "P3": {
-            "Sumi": "",
-        },
-        "P4": {
-            "Sumi": "",
-        },
-    },
-    5: {
-        "P1": {
-            "Sumi": "",
-        },
-        "P2": {
-            "Sumi": "",
-        },
-        "P3": {
-            "Sumi": "",
-        },
-        "P4": {
-            "Sumi": "",
-        },
-        "P5": {
-            "Sumi": "",
-        },
-    },
-    6: {
-        "P1": {
-            "Sumi": "",
-        },
-        "P2": {
-            "Sumi": "",
-        },
-        "P3": {
-            "Sumi": "",
-        },
-        "P4": {
-            "Sumi": "",
-        },
-        "P5": {
-            "Sumi": "",
-        },
-        "P6": {
-            "Sumi": "",
-        },
-    },
-}
-
-
+"""
