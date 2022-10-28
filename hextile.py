@@ -34,12 +34,19 @@ class Rules:
 
 
 class EnsoKoi:
+    instance = None
+
+    def __new__(cls):
+        if cls.instance:
+            return cls.instance
+        cls.instance = super().__new__(cls)
+        return cls.instance
 
     def __init__(self):
-        m = Map()
+        self.map = Map()
         self.player_count = 2
         self.positions = Loader.initial_positions(self.player_count)
-        self.boardtiles = (HexTile(cd) for cd in m.tiles.values())
+        self.boardtiles = {self.map.address(cd): HexTile(cd) for cd in self.map.tiles.values()}
         self.initializePlayers()
         self.startingPositions()
 
@@ -63,21 +70,16 @@ class EnsoKoi:
             pl._order = f"P{v+1}"
 
     def startingPositions(self):
-        for p in self.players:
+        for p in self.players.values():
             self.arrangePieces(p)
 
     def arrangePieces(self, player):
-        # print(player.team.koi)
-        # a = zip(
-        #     self.boardtiles,
-        #     self.positions
-        # )
-        print("\n\n\n")
-        for i in self.positions:
-            print(i)
-        # Get board
-        # Get Players
-
+        key = player._order
+        for k, tile in self.positions.get(key).items():
+            t = string.Template(k)
+            koiname = t.safe_substitute(Name=player.player_name)
+            _koi = player.team.get(koiname)
+            self.boardtiles.get(tile).occupant.append(_koi)
 
 
 class Coord(tuple):
@@ -107,7 +109,6 @@ class Coord(tuple):
     #     return f"{self.__class__} Object at {self._coord}"
 
 
-
 class IterProperty:
     def __init__(self, func):
         self.func = func
@@ -117,6 +118,12 @@ class IterProperty:
 
 
 class Map:
+    instance = None
+    def __new__(cls):
+        if cls.instance:
+            return cls.instance
+        cls.instance = super().__new__(cls)
+        return cls.instance
 
     def __init__(self):
         self.notation_map = Map.notation
@@ -274,67 +281,67 @@ Sumi        = lambda name: KoiPiece(id=name, range=4, value=2, type="Koi", multi
 
 
 class InitialTeam:
+    def __init__(self, name):
+        self.name = name
 
     @property
     def koi(self):
-        return (
-            Tancho("TanchoA"),
-            Tancho("TanchoB"),
-            Tancho("TanchoC"),
-            Tancho("TanchoD"),
-            Asagi("AsagiA"),
-            Asagi("AsagiB"),
-            Kumonryu("KumonryuA"),
-            Kumonryu("KumonryuB"),
-            Utsuri("UtsuriA"),
-            Utsuri("UtsuriB"),
-            Ogon("OgonA"),
-            Ogon("OgonB"),
-            Sumi("Sumi"),
-        )
+        return {
+            f"{self.name}_TanchoA": Tancho(f"{self.name}_TanchoA"),
+            f"{self.name}_TanchoB": Tancho(f"{self.name}_TanchoB"),
+            f"{self.name}_TanchoC": Tancho(f"{self.name}_TanchoC"),
+            f"{self.name}_TanchoD": Tancho(f"{self.name}_TanchoD"),
+            f"{self.name}_AsagiA": Asagi(f"{self.name}_AsagiA"),
+            f"{self.name}_AsagiB": Asagi(f"{self.name}_AsagiB"),
+            f"{self.name}_KumonryuA": Kumonryu(f"{self.name}_KumonryuA"),
+            f"{self.name}_KumonryuB": Kumonryu(f"{self.name}_KumonryuB"),
+            f"{self.name}_UtsuriA": Utsuri(f"{self.name}_UtsuriA"),
+            f"{self.name}_UtsuriB": Utsuri(f"{self.name}_UtsuriB"),
+            f"{self.name}_OgonA": Ogon(f"{self.name}_OgonA"),
+            f"{self.name}_OgonB": Ogon(f"{self.name}_OgonB"),
+            f"{self.name}_Sumi": Sumi(f"{self.name}_Sumi"),
+        }
 
     @property
     def stones(self):
-        return (
-            Stone("StoneA"),
-            Stone("StoneB"),
-            Stone("StoneC"),
-            Stone("StoneD"),
-            Stone("StoneE"),
-        )
+        return {
+            f"{self.name}_StoneA": Stone(f"{self.name}_StoneA"),
+            f"{self.name}_StoneB": Stone(f"{self.name}_StoneB"),
+            f"{self.name}_StoneC": Stone(f"{self.name}_StoneC"),
+            f"{self.name}_StoneD": Stone(f"{self.name}_StoneD"),
+            f"{self.name}_StoneE": Stone(f"{self.name}_StoneE"),
+        }
 
     @property
     def lotustiles(self):
-        return (
-            Tile_Lotus("LotusA"),
-            Tile_Lotus("LotusB"),
-            Tile_Lotus("LotusC"),
-            Tile_Lotus("LotusD"),
-            Tile_Lotus("LotusE"),
-            Tile_Lotus("LotusF"),
-            Tile_Lotus("LotusG"),
-            Tile_Lotus("LotusH"),
-            Tile_Lotus("LotusI"),
-        )
+        return {
+            f"{self.name}_LotusA": Tile_Lotus(f"{self.name}_LotusA"),
+            f"{self.name}_LotusB": Tile_Lotus(f"{self.name}_LotusB"),
+            f"{self.name}_LotusC": Tile_Lotus(f"{self.name}_LotusC"),
+            f"{self.name}_LotusD": Tile_Lotus(f"{self.name}_LotusD"),
+            f"{self.name}_LotusE": Tile_Lotus(f"{self.name}_LotusE"),
+            f"{self.name}_LotusF": Tile_Lotus(f"{self.name}_LotusF"),
+            f"{self.name}_LotusG": Tile_Lotus(f"{self.name}_LotusG"),
+            f"{self.name}_LotusH": Tile_Lotus(f"{self.name}_LotusH"),
+            f"{self.name}_LotusI": Tile_Lotus(f"{self.name}_LotusI"),
+        }
 
 
 class Player:
 
     def __init__(self, name=""):
-        self._order = None
         self.player_name = name
+        self._order = None
+        self._initialteam = InitialTeam(self.player_name)
         self.score = 0
-        self.team = InitialTeam()
+        self.team = self._initialteam.koi
         self.captured = {}
-        self.stones = []
+        self.stones = self._initialteam.stones
+        self.lotustiles = self._initialteam.lotustiles
 
 
 # Exceptions
 class BoundaryException(Exception):pass
-
-
-
-
 
 
 
@@ -345,12 +352,9 @@ instance = EnsoKoi()
 
 
 
-# for hx in instance.boardtiles:
-#     print(f"{hx!r}")
+for hx in instance.boardtiles.items():
+    print(f"{hx!r}")
 
-
-
-assert what
 
 # q ascending == Letter
 # s += Number along letter
@@ -368,74 +372,43 @@ A Hex direction should be predictable
 240 deg     downleft
 300 deg     upleft
 
-
 """
 
-# a = Coord((0, 0, 1))
-# b = Coord((2, -2, 4))
-# c = Coord((12, 2, -3))
-
-# print(f'{a!s:_^120}')
-
-M = Map()
-
-# for _ in M.notation.items():
-#     print(_)
 
 
-# print(M.notation.get("H3"))
-# print("//")
-# print(M.notation_map.get("A2"))
-
-h = HexTile(coord=M.notation.get("H7"))
-
-print(repr(h))
-# print(h.up)
-# print(h.inBounds)
-
-
-for ne in h.neighbors:
-    address = M.address(ne)
-    print(f"neighbor at {ne} is called {address}")
-    # print("who is at position:")
-    # print(M.position(address))
-    safe = M.isSafe(address)
-    if safe:
-        print(f"\t\t{address} is safe? {safe}")
+# Maybe logic for movement
+# for ne in h.neighbors:
+#     address = M.address(ne)
+#     print(f"neighbor at {ne} is called {address}")
+#     # print("who is at position:")
+#     # print(M.position(address))
+#     safe = M.isSafe(address)
+#     if safe:
+#         print(f"\t\t{address} is safe? {safe}")
 
 
-
-# perm = {
-#     p: Coord(p)
-#     for p
-#     in list(permutations(range(-1 * Map.max_radius, Map.max_radius + 1), 3))
-#     if sum(p) == 0
-# }
-# perm[Rules.origin] = Coord(Rules.origin)
-
-
-
-# for x in perm.items():
-#     print(x)
-
-# print(len(perm))
-
-# print((7*6)+(6*6)+(5*6)+(4*6)+(3*6)+(2*6)+(1*6)+1)
-
-# def corners(axis):
-#     return abs(axis) >= Map.max_radius - 1
-
-
-# unsafe = [y for y in perm if len([x for x in map(corners, y) if x]) == 2]
-
-# print(unsafe)
-# print(len(unsafe))
-# print(4*6)
-
-
-myPlayer = Player(name="Landon")
 
 # Todo:
 """
+Clarify Lotus tile rules
+- There are x amount of lotus tiles that are shuffled and placed face down in the center of the map at random
+    True Blind Random
+- Players take turns placing lotus tiles face down at the start
+    Strategic Blind Random
+- Players take turns designating a tile to be a lotus at the start
+    Strategic Visible Random
+- The board has set lotus tiles
+    Strategic
+
+Game loop
+break into phases
+initial placement setup
+initial player setup
+player plays
+other player plays
+loop until conditions met
+conclusive phase
+rematch menu
+
 
 """
